@@ -1,5 +1,5 @@
-Hi, I’m Ayush!  
-Welcome to my Realtime Chat Application built with the MERN stack (MongoDB, Express, React, Node.js) and styled using Tailwind CSS. This app allows users to chat in real-time and join multiple chat rooms for seamless conversations.
+Hi, I’m Ayush!
+Welcome to my real-time chat application built with the MERN stack (MongoDB, Express.js, React.js, and Node.js) and styled using Tailwind CSS & DaisyUI. This platform enables users to engage in seamless real-time conversations, join multiple chat rooms, and interact through an AI-powered chatbot. It also features AI-based toxicity detection for automated content moderation, ensuring safer and more positive communication experiences.
 
 ### Setup .env file
 
