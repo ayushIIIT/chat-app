@@ -48,11 +48,25 @@ export const sendMessage = async (req, res) => {
       imageUrl = uploadResponse.secure_url;
     }
 
+    // Read moderation result attached by moderationMiddleware
+    // If text was empty/skipped, fall back to safe defaults
+    const {
+      isToxic = false,
+      toxicityScore = 0,
+      moderationCategories = {},
+      flaggedAt = null,
+    } = req.moderationResult || {};
+
     const newMessage = new Message({
       senderId,
       receiverId,
       text,
       image: imageUrl,
+      // Save moderation metadata alongside the message
+      isToxic,
+      toxicityScore,
+      moderationCategories,
+      flaggedAt,
     });
 
     await newMessage.save();

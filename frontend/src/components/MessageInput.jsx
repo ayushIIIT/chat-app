@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [isSending, setIsSending] = useState(false);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
@@ -32,18 +33,25 @@ const MessageInput = () => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
 
+    setIsSending(true);
     try {
       await sendMessage({
         text: text.trim(),
         image: imagePreview,
       });
 
-      // Clear form
+      // Only clear the form if message was sent successfully
+      // If blocked by moderation, sendMessage throws — so we land in catch
       setText("");
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
+      // Message was blocked by moderation or a network error occurred
+      // Toast is already shown by useChatStore — nothing extra needed here
+      // Intentionally NOT clearing the input so user can edit and retry
       console.error("Failed to send message:", error);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -77,6 +85,7 @@ const MessageInput = () => {
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
+            disabled={isSending}
           />
           <input
             type="file"
@@ -91,6 +100,7 @@ const MessageInput = () => {
             className={`hidden sm:flex btn btn-circle
                      ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
             onClick={() => fileInputRef.current?.click()}
+            disabled={isSending}
           >
             <Image size={20} />
           </button>
@@ -98,7 +108,7 @@ const MessageInput = () => {
         <button
           type="submit"
           className="btn btn-sm btn-circle"
-          disabled={!text.trim() && !imagePreview}
+          disabled={(!text.trim() && !imagePreview) || isSending}
         >
           <Send size={22} />
         </button>
@@ -106,4 +116,5 @@ const MessageInput = () => {
     </div>
   );
 };
+
 export default MessageInput;
